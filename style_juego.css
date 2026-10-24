@@ -1,0 +1,59 @@
+* {
+    font-family: 'Fredoka One', 'Quicksand', cursive, sans-serif;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background: linear-gradient(180deg, #4FC3F7 0%, #E0F7FA 100%);
+}
+
+canvas {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+}
+
+/* Animación suave de pulsación */
+@keyframes pulse-gentle {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.06); }
+}
+
+.animate-pulse-gentle {
+    animation: pulse-gentle 1.8s infinite ease-in-out;
+}
+
+@keyframes bounce-fun {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.animate-bounce-fun {
+    animation: bounce-fun 1.2s infinite ease-in-out;
+}
+
+/* Bocadillo de diálogo animado */
+@keyframes pop-speech {
+    0% { transform: scale(0.5) translateY(20px); opacity: 0; }
+    50% { transform: scale(1.1) translateY(-5px); opacity: 1; }
+    100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.pop-in {
+    animation: pop-speech 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+/* Parpadeo al recibir daño */
+@keyframes damage-flash {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+.animate-flash {
+    animation: damage-flash 0.2s infinite;
+}

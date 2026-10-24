@@ -1,0 +1,134 @@
+<!--
+Desarrollado por el profesor Mauricio Medel Guajardo
+para el colegio Senda del Saber de Puente Alto.
+Santiago, 2026
+profe.tp.medel@gmail.com
+-->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>¡Super Salto Alegre!</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
+    <!-- Estilos CSS -->
+    <link rel="stylesheet" href="style_juego.css">
+</head>
+<body class="w-screen h-screen overflow-hidden select-none bg-sky-200">
+
+    <!-- CANVAS PARA EL JUEGO -->
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- INTERFAZ SUPERPUESTA (HUD) -->
+    <div id="hud" class="absolute top-0 left-0 w-full p-4 md:p-6 flex justify-between items-center pointer-events-none z-10 hidden">
+        <!-- MARCADOR Y VIDAS -->
+        <div class="flex items-center gap-4">
+            <!-- ESTRELLAS -->
+            <div class="bg-white/90 backdrop-blur-md px-5 py-2.5 rounded-full border-4 border-yellow-400 shadow-lg flex items-center gap-2">
+                <span class="text-3xl md:text-4xl animate-bounce-fun">⭐</span>
+                <span id="starScore" class="text-2xl md:text-4xl font-bold text-amber-500 tracking-wider">0</span>
+            </div>
+
+            <!-- SISTEMA DE VIDAS (CORAZONES) -->
+            <div class="bg-white/90 backdrop-blur-md px-5 py-2.5 rounded-full border-4 border-rose-400 shadow-lg flex items-center gap-2">
+                <div id="livesContainer" class="flex gap-1 text-2xl md:text-3xl">
+                    <span id="heart1">❤️</span>
+                    <span id="heart2">❤️</span>
+                    <span id="heart3">❤️</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- MENTOR / MENSAJES MOTIVADORES -->
+        <div id="cheerBubble" class="bg-amber-300 text-amber-900 px-6 py-2.5 rounded-3xl border-4 border-white shadow-xl text-lg md:text-2xl font-extrabold pop-in opacity-0 transition-all duration-300">
+            ¡Tú puedes! 🌟
+        </div>
+
+        <!-- INDICADOR TECLA ESPACIO (ACCESIBILIDAD) -->
+        <div class="hidden sm:flex items-center gap-2 bg-white/80 px-4 py-2 rounded-2xl border-2 border-sky-400 shadow">
+            <span class="text-2xl">⌨️</span>
+            <span class="text-lg font-bold text-sky-800">ESPACIO para saltar</span>
+        </div>
+    </div>
+
+    <!-- PANTALLA DE INICIO (MENU PRINCIPAL) -->
+    <div id="startScreen" class="absolute inset-0 bg-sky-300/95 backdrop-blur-sm flex flex-col items-center justify-center p-6 z-20 transition-opacity duration-500">
+        <div class="bg-white/95 rounded-3xl p-6 md:p-10 border-8 border-yellow-400 shadow-2xl max-w-xl w-full text-center flex flex-col items-center gap-6">
+            
+            <!-- TÍTULO DIVERTIDO -->
+            <div class="relative">
+                <h1 class="text-4xl md:text-6xl font-black text-sky-600 drop-shadow-md leading-tight">
+                    ¡SUPER SALTO!
+                </h1>
+                <span class="text-2xl md:text-3xl font-bold text-pink-500 block mt-1">Aventura Alegre 🌈</span>
+            </div>
+
+            <!-- ILUSTRACIÓN DEL PERSONAJE -->
+            <div class="w-36 h-36 md:w-44 md:h-44 bg-sky-100 rounded-full border-4 border-sky-300 flex items-center justify-center shadow-inner relative animate-bounce-fun">
+                <svg class="w-28 h-28 md:w-36 md:h-36" viewBox="0 0 100 100">
+                    <circle cx="25" cy="25" r="14" fill="#FFA726" stroke="#E65100" stroke-width="3"/>
+                    <circle cx="75" cy="25" r="14" fill="#FFA726" stroke="#E65100" stroke-width="3"/>
+                    <circle cx="25" cy="25" r="7" fill="#FFCC80"/>
+                    <circle cx="75" cy="25" r="7" fill="#FFCC80"/>
+                    <circle cx="50" cy="50" r="35" fill="#FFB74D" stroke="#E65100" stroke-width="3"/>
+                    <path d="M 20 40 Q 50 25 80 40 L 75 55 Q 50 45 25 55 Z" fill="#E91E63"/>
+                    <circle cx="38" cy="48" r="5" fill="#333"/>
+                    <circle cx="62" cy="48" r="5" fill="#333"/>
+                    <circle cx="40" cy="46" r="2" fill="#FFF"/>
+                    <circle cx="64" cy="46" r="2" fill="#FFF"/>
+                    <ellipse cx="50" cy="58" rx="8" ry="5" fill="#E65100"/>
+                    <path d="M 40 65 Q 50 78 60 65" stroke="#333" stroke-width="4" fill="none" stroke-linecap="round"/>
+                    <circle cx="30" cy="62" r="6" fill="#FF8A80" opacity="0.6"/>
+                    <circle cx="70" cy="62" r="6" fill="#FF8A80" opacity="0.6"/>
+                </svg>
+            </div>
+
+            <p class="text-xl md:text-2xl text-slate-700 font-bold max-w-md">
+                Presiona la <span class="text-sky-600 bg-sky-100 px-2 py-1 rounded-lg">BARRA ESPACIADORA</span> o TOCA LA PANTALLA para saltar y esquivar las bombas.
+            </p>
+
+            <!-- BOTÓN PRINCIPAL GIGANTE -->
+            <button id="startBtn" class="w-full py-5 md:py-6 bg-gradient-to-r from-emerald-400 to-green-500 hover:from-emerald-500 hover:to-green-600 text-white rounded-3xl border-b-8 border-green-700 text-2xl md:text-4xl font-extrabold shadow-xl transition-transform active:scale-95 animate-pulse-gentle flex items-center justify-center gap-3 cursor-pointer">
+                <span>¡JUGAR AHORA!</span>
+                <span class="text-4xl md:text-5xl">🚀</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- PANTALLA DE GAME OVER -->
+    <div id="gameOverScreen" class="absolute inset-0 bg-sky-900/80 backdrop-blur-md flex flex-col items-center justify-center p-6 z-30 hidden transition-all duration-300">
+        <div class="bg-white/95 rounded-3xl p-6 md:p-10 border-8 border-pink-400 shadow-2xl max-w-xl w-full text-center flex flex-col items-center gap-6 pop-in">
+            
+            <div class="text-6xl md:text-7xl animate-bounce-fun">🌟</div>
+
+            <h2 class="text-4xl md:text-6xl font-black text-pink-500 drop-shadow-md">
+                ¡GRAN INTENTO!
+            </h2>
+
+            <p class="text-2xl md:text-3xl font-bold text-slate-700">
+                Conseguiste <span id="finalScore" class="text-amber-500 text-4xl font-extrabold">0</span> Estrellas ⭐
+            </p>
+
+            <p class="text-xl md:text-2xl text-sky-700 font-extrabold">
+                ¡Lo hiciste super bien! ¡Eres increíble! 🎉
+            </p>
+
+            <!-- BOTÓN VOLVER A INICIO -->
+            <a href="index.html" class="w-full py-5 md:py-6 bg-gradient-to-r from-sky-400 to-blue-500 hover:from-sky-500 hover:to-blue-600 text-white rounded-3xl border-b-8 border-blue-700 text-2xl md:text-3xl font-extrabold shadow-xl transition-transform active:scale-95 flex items-center justify-center gap-3 no-underline cursor-pointer">
+                <span>🏠 VOLVER A INICIO</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- ZONA TÁCTIL GRANDE EN PANTALLA -->
+    <div id="touchJumpZone" class="absolute inset-0 z-0 hidden cursor-pointer" aria-label="Zona de salto"></div>
+
+    <!-- Script JavaScript -->
+    <script src="script_juego.js"></script>
+</body>
+</html>
