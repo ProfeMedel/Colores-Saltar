@@ -45,7 +45,7 @@ const COLORS = [
   { id: 'orange', name: 'Naranja', hex: '#ff9933' },
   { id: 'purple', name: 'Morado', hex: '#a55eea' },
   { id: 'pink', name: 'Rosa', hex: '#ff78ae' },
-  { id: 'teal', name: 'Turquesa', hex: '#2bcbba' }
+  { id: 'gray', name: 'Gris', hex: '#aabdbb' }
 ];
 
 // ESTADO DEL JUEGO
