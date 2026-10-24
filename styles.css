@@ -1,0 +1,111 @@
+[cite: 3]body {
+  font-family: 'Fredoka', 'Mali', cursive, sans-serif;
+  background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 50%, #fbc2eb 100%);
+  min-height: 100vh;
+  overflow-x: hidden;
+  touch-action: manipulation;
+}
+
+/* Animación de Nubes de Fondo */
+.cloud {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 50px;
+  animation: floatCloud linear infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.cloud::before, .cloud::after {
+  content: '';
+  position: absolute;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+}
+
+.cloud-1 { width: 140px; height: 45px; top: 8%; animation-duration: 28s; }
+.cloud-1::before { width: 50px; height: 50px; top: -20px; left: 25px; }
+.cloud-1::after { width: 60px; height: 60px; top: -28px; right: 25px; }
+
+.cloud-2 { width: 180px; height: 55px; top: 22%; animation-duration: 38s; animation-delay: -12s; }
+.cloud-2::before { width: 65px; height: 65px; top: -25px; left: 30px; }
+.cloud-2::after { width: 75px; height: 75px; top: -35px; right: 30px; }
+
+.cloud-3 { width: 120px; height: 40px; top: 65%; animation-duration: 32s; animation-delay: -5s; }
+.cloud-3::before { width: 45px; height: 45px; top: -18px; left: 20px; }
+.cloud-3::after { width: 50px; height: 50px; top: -22px; right: 20px; }
+
+@keyframes floatCloud {
+  0% { transform: translateX(-200px); }
+  100% { transform: translateX(105vw); }
+}
+
+/* Efecto Botón 3D con Brillo Suave */
+.btn-3d {
+  transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-3d::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 10px;
+  right: 10px;
+  height: 35%;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.6), rgba(255,255,255,0.05));
+  border-radius: 20px 20px 8px 8px;
+  pointer-events: none;
+}
+
+.btn-3d:hover {
+  transform: translateY(-4px) scale(1.03);
+}
+
+.btn-3d:active {
+  transform: translateY(3px) scale(0.97);
+}
+
+/* Animaciones Interactivas */
+.bounce-wiggle {
+  animation: bounceWiggle 0.8s ease-in-out;
+}
+
+@keyframes bounceWiggle {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  20% { transform: scale(1.15) rotate(-6deg); }
+  40% { transform: scale(1.15) rotate(6deg); }
+  60% { transform: scale(1.1) rotate(-3deg); }
+  80% { transform: scale(1.05) rotate(3deg); }
+}
+
+.shake-error {
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-12px); }
+  40%, 80% { transform: translateX(12px); }
+}
+
+.pulse-glow {
+  animation: pulseGlow 2s infinite alternate;
+}
+
+@keyframes pulseGlow {
+  0% { filter: drop-shadow(0 0 5px rgba(255,235,59,0.5)); }
+  100% { filter: drop-shadow(0 0 20px rgba(255,235,59,0.9)); }
+}
+
+/* Canvas para partículas de celebración */
+#fxCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 100;
+}

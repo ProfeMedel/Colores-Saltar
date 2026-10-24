@@ -1,0 +1,196 @@
+<!--
+Desarrollado por el profesor Mauricio Medel Guajardo
+para el colegio Senda del Saber de Puente Alto.
+Santiago, 2026
+profe.tp.medel@gmail.com
+-->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>¡Pinta y Aprende! Senda</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Fuentes Infantiles -->
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Mali:wght@600;700&display=swap" rel="stylesheet">
+  <!-- Hoja de estilos personalizada -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="flex flex-col justify-between items-center min-h-screen p-2 md:p-4 relative select-none overflow-x-hidden">
+
+  <!-- Nubes de fondo animadas -->
+  <div class="cloud cloud-1"></div>
+  <div class="cloud cloud-2"></div>
+  <div class="cloud cloud-3"></div>
+
+  <!-- Canvas superpuesto para efectos de confeti -->
+  <canvas id="fxCanvas"></canvas>
+
+  <!-- ENCABEZADO -->
+  <header class="w-full max-w-5xl z-10 space-y-2 mb-2">
+    <!-- Marcador de Puntos y Progreso -->
+    <div class="flex justify-between items-center bg-gradient-to-r from-teal-400 via-cyan-500 to-blue-500 text-white px-4 py-2 rounded-2xl shadow-lg border-4 border-white">
+      <div class="flex items-center space-x-2 bg-white/20 backdrop-blur px-3 py-1 rounded-xl">
+        <span class="text-lg md:text-xl">🧩</span>
+        <span class="text-base md:text-lg font-bold">Reto:</span>
+        <strong id="questionCounter" class="text-yellow-300 text-lg md:text-xl font-black">1 / 10</strong>
+      </div>
+      
+      <div class="flex items-center space-x-2 bg-white/20 backdrop-blur px-3 py-1 rounded-xl">
+        <span class="text-lg md:text-xl">⭐</span>
+        <span class="text-base md:text-lg font-bold">Puntos:</span>
+        <strong id="scoreCounter" class="text-yellow-300 text-xl md:text-2xl font-black">0</strong>
+      </div>
+    </div>
+
+    <!-- Cinto de Instrucciones -->
+    <div class="bg-white/90 backdrop-blur-md p-3 md:p-4 rounded-2xl shadow-xl border-4 border-yellow-300 flex items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="text-2xl md:text-3xl animate-bounce">🎨</div>
+        <div>
+          <p id="instructionSubtitle" class="text-[10px] md:text-xs font-bold text-pink-500 uppercase tracking-wider">¡Misión de Color - Colegio Senda del Saber!</p>
+          <h1 id="instructionText" class="text-lg md:text-2xl font-extrabold text-indigo-900 leading-tight">¡Pinta la figura del mismo color!</h1>
+        </div>
+      </div>
+      
+      <button id="speakerBtn" class="btn-3d bg-gradient-to-b from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-white font-bold p-2.5 md:p-3 rounded-xl shadow-lg shadow-orange-500/30 border-2 border-amber-200 flex items-center justify-center min-w-[50px] min-h-[50px]" aria-label="Escuchar instrucción">
+        <span class="text-2xl md:text-3xl">🔊</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- CONTENEDOR PRINCIPAL CON PALETAS LATERALES Y JUEGO AL CENTRO -->
+  <div class="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-[180px_1fr_180px] gap-3 md:gap-4 items-center z-10 my-auto">
+    
+    <!-- PALETA IZQUIERDA (Rojo, Azul, Amarillo, Verde) -->
+    <div class="bg-white/90 backdrop-blur-md p-3 rounded-2xl shadow-xl border-4 border-purple-300 flex flex-col gap-2 order-2 lg:order-1">
+      <p class="text-center font-black text-purple-800 text-xs md:text-sm mb-1">🖌️ IZQUIERDA</p>
+      
+      <!-- Rojo -->
+      <button class="color-btn btn-3d bg-gradient-to-b from-red-400 to-red-600 border-2 border-red-200 shadow-md shadow-red-500/40 rounded-xl p-2.5 flex items-center justify-center gap-2 text-white font-black text-sm md:text-base" data-color="red">
+        <span class="text-xl">🍎</span> ROJO
+      </button>
+
+      <!-- Azul -->
+      <button class="color-btn btn-3d bg-gradient-to-b from-blue-400 to-blue-600 border-2 border-blue-200 shadow-md shadow-blue-500/40 rounded-xl p-2.5 flex items-center justify-center gap-2 text-white font-black text-sm md:text-base" data-color="blue">
+        <span class="text-xl">🌊</span> AZUL
+      </button>
+
+      <!-- Amarillo -->
+      <button class="color-btn btn-3d bg-gradient-to-b from-yellow-300 to-yellow-500 border-2 border-yellow-100 shadow-md shadow-yellow-500/40 rounded-xl p-2.5 flex items-center justify-center gap-2 text-yellow-950 font-black text-sm md:text-base" data-color="yellow">
+        <span class="text-xl">⭐</span> AMARILLO
+      </button>
+
+      <!-- Verde -->
+      <button class="color-btn btn-3d bg-gradient-to-b from-green-400 to-emerald-600 border-2 border-green-200 shadow-md shadow-green-500/40 rounded-xl p-2.5 flex items-center justify-center gap-2 text-white font-black text-sm md:text-base" data-color="green">
+        <span class="text-xl">🐸</span> VERDE
+      </button>
+    </div>
+
+    <!-- ÁREA CENTRAL DE JUEGO -->
+    <main class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 order-1 lg:order-2 w-full">
+      
+      <!-- Tarjeta Modelo de Referencia -->
+      <div class="bg-white/95 backdrop-blur rounded-2xl p-3 md:p-4 text-center shadow-xl border-4 border-sky-300 flex flex-col justify-between items-center relative overflow-hidden">
+        <div class="absolute top-2 left-3 bg-sky-100 text-sky-700 font-bold px-2.5 py-0.5 rounded-full text-[11px] md:text-xs">
+          1. Modelo a copiar
+        </div>
+        <h2 class="text-base md:text-lg font-black text-sky-800 mt-4 mb-1">¡Mira este modelo!</h2>
+        
+        <div class="w-full h-36 md:h-44 bg-gradient-to-b from-sky-50 to-blue-50 rounded-xl border-2 border-dashed border-sky-200 flex items-center justify-center p-2 relative">
+          <svg id="targetSvg" viewBox="0 0 200 200" width="200" height="200" class="w-full h-full max-w-[140px] max-h-[140px] filter drop-shadow-md">
+            <!-- Dibujo SVG modelo -->
+          </svg>
+        </div>
+
+        <div id="targetLabel" class="mt-2 text-sm md:text-lg font-black text-indigo-900 bg-amber-100 px-3 py-1.5 rounded-xl border border-amber-300 w-full">
+          Círculo Rojo
+        </div>
+      </div>
+
+      <!-- Tarjeta Interactiva del Estudiante -->
+      <div id="playerCard" class="bg-white/95 backdrop-blur rounded-2xl p-3 md:p-4 text-center shadow-xl border-4 border-pink-300 flex flex-col justify-between items-center relative overflow-hidden">
+        <div class="absolute top-2 left-3 bg-pink-100 text-pink-700 font-bold px-2.5 py-0.5 rounded-full text-[11px] md:text-xs">
+          2. Tu turno
+        </div>
+        <h2 class="text-base md:text-lg font-black text-pink-800 mt-4 mb-1">¡Elige un color!</h2>
+        
+        <div class="w-full h-36 md:h-44 bg-gradient-to-b from-pink-50 to-purple-50 rounded-xl border-2 border-dashed border-pink-200 flex items-center justify-center p-2 relative">
+          <svg id="playerSvg" viewBox="0 0 200 200" width="200" height="200" class="w-full h-full max-w-[140px] max-h-[140px] filter drop-shadow-md">
+            <!-- Dibujo SVG jugador -->
+          </svg>
+        </div>
+
+        <div class="w-full mt-2 flex items-center justify-between bg-purple-100 px-3 py-1.5 rounded-xl border border-purple-200 min-h-[42px]">
+          <div id="feedbackText" class="text-xs md:text-sm font-extrabold text-purple-900 text-left">
+            ¡Haz clic en un color!
+          </div>
+          <div id="moodIcon" class="text-2xl md:text-3xl transition-transform duration-300">
+            🤔
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- PALETA DERECHA (Turquesa, Naranja, Morado, Rosa) -->
+    <div class="bg-white/90 backdrop-blur-md p-3 rounded-2xl shadow-xl border-4 border-purple-300 flex flex-col gap-2 order-3 lg:order-3">
+      <p class="text-center font-black text-purple-800 text-xs md:text-sm mb-1">🖌️ DERECHA</p>
+      
+      <!-- Turquesa -->
+      <button class="color-btn btn-3d bg-gradient-to-b from-teal-300 to-teal-500 border-2 border-teal-100 shadow-md shadow-teal-500/40 rounded-xl p-2.5 flex items-center justify-center gap-2 text-teal-950 font-black text-sm md:text-base" data-color="teal">
+        <span class="text-xl">💎</span> TURQUESA
+      </button>
+      
+      <!-- Naranja -->
+      <button class="color-btn btn-3d bg-gradient-to-b from-orange-400 to-orange-600 border-2 border-orange-200 shadow-md shadow-orange-500/40 rounded-xl p-2.5 flex items-center justify-center gap-2 text-white font-black text-sm md:text-base" data-color="orange">
+        <span class="text-xl">🍊</span> NARANJA
+      </button>
+
+      <!-- Morado -->
+      <button class="color-btn btn-3d bg-gradient-to-b from-purple-400 to-purple-700 border-2 border-purple-200 shadow-md shadow-purple-500/40 rounded-xl p-2.5 flex items-center justify-center gap-2 text-white font-black text-sm md:text-base" data-color="purple">
+        <span class="text-xl">🍇</span> MORADO
+      </button>
+
+      <!-- Rosa -->
+      <button class="color-btn btn-3d bg-gradient-to-b from-pink-400 to-pink-600 border-2 border-pink-200 shadow-md shadow-pink-500/40 rounded-xl p-2.5 flex items-center justify-center gap-2 text-white font-black text-sm md:text-base" data-color="pink">
+        <span class="text-xl">🦩</span> ROSA
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- PIE DE PÁGINA -->
+  <footer class="w-full max-w-5xl z-10 text-center py-2 text-xs md:text-sm font-bold text-indigo-900/80">
+    Colegio Senda del Saber — MM 2026
+  </footer>
+
+  <!-- MODAL DE FINAL DE PARTIDA -->
+  <div id="gameOverModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-md hidden flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-3xl p-6 md:p-8 text-center max-w-md w-full border-8 border-yellow-300 shadow-2xl relative transform transition-all scale-100">
+      
+      <div class="w-24 h-24 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-yellow-400 pulse-glow">
+        <span id="finalMedalIcon" class="text-6xl animate-bounce">🏆</span>
+      </div>
+
+      <h2 class="text-3xl md:text-4xl font-black text-emerald-600 mb-2">¡FANTÁSTICO!</h2>
+      <p class="text-gray-600 font-bold text-lg mb-4">Completaste todas las preguntas súper bien.</p>
+
+      <div class="bg-amber-50 p-4 rounded-2xl border-2 border-amber-200 mb-6">
+        <p class="text-sm font-bold text-amber-700 uppercase">Puntuación Final</p>
+        <p class="text-4xl md:text-5xl font-black text-amber-500"><span id="finalScoreText">100</span> <span class="text-2xl">pts</span></p>
+      </div>
+
+      <div class="space-y-3">
+        <button id="giftBtn" onclick="window.location.href='juego.html'" class="btn-3d w-full bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 text-white text-xl font-black py-4 px-6 rounded-2xl shadow-lg border-2 border-white flex items-center justify-center gap-3">
+          <span>🎁</span> Recibe tu premio
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
