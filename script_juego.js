@@ -124,6 +124,9 @@ const ctx = canvas.getContext('2d');
 const startScreen = document.getElementById('startScreen');
 const gameOverScreen = document.getElementById('gameOverScreen');
 const startBtn = document.getElementById('startBtn');
+const homeBtn = document.getElementById('homeBtn');
+const jumpBtn = document.getElementById('jumpBtn');
+const touchControlBar = document.getElementById('touchControlBar');
 const hud = document.getElementById('hud');
 const starScoreEl = document.getElementById('starScore');
 const finalScoreEl = document.getElementById('finalScore');
@@ -311,7 +314,6 @@ function createParticles(x, y, color, count = 10) {
 }
 
 function spawnElements() {
-    // Generación de estrellas, círculos y globos azules a altura normal
     if (Math.random() < 0.035) {
         const types = ['star', 'balloon', 'circle'];
         collectibles.push({
@@ -323,11 +325,10 @@ function spawnElements() {
         });
     }
 
-    // Generación de CORAZONES ROJOS (Más altos y mucho menos frecuentes)[cite: 2]
     if (Math.random() < 0.003) {
         collectibles.push({
             x: canvas.width + 50,
-            y: hero.groundY - 270 - Math.random() * 80, // Altura superior elevada
+            y: hero.groundY - 270 - Math.random() * 80,
             size: 45,
             type: 'heart_item',
             floatOffset: Math.random() * Math.PI * 2
@@ -383,6 +384,7 @@ function triggerGameOver() {
     finalScoreEl.textContent = score;
     hud.classList.add('hidden');
     touchJumpZone.classList.add('hidden');
+    touchControlBar.classList.add('hidden');
     gameOverScreen.classList.remove('hidden');
 }
 
@@ -449,7 +451,6 @@ function updateAndRender() {
         ctx.translate(item.x, floatY);
 
         if (item.type === 'star') {
-            // Estrella Amarilla
             ctx.fillStyle = '#FFD54F';
             ctx.strokeStyle = '#FF8F00';
             ctx.lineWidth = 3;
@@ -462,7 +463,6 @@ function updateAndRender() {
             ctx.fill();
             ctx.stroke();
         } else if (item.type === 'balloon') {
-            // Globo Azul
             ctx.fillStyle = '#29B6F6';
             ctx.strokeStyle = '#0288D1';
             ctx.lineWidth = 3;
@@ -471,7 +471,6 @@ function updateAndRender() {
             ctx.fill();
             ctx.stroke();
             
-            // Hilo del globo
             ctx.strokeStyle = '#E0E0E0';
             ctx.lineWidth = 2;
             ctx.beginPath();
@@ -479,7 +478,6 @@ function updateAndRender() {
             ctx.quadraticCurveTo(5, 24, 0, 32);
             ctx.stroke();
         } else if (item.type === 'circle') {
-            // Círculo Brillante
             ctx.fillStyle = '#FFCA28';
             ctx.strokeStyle = '#FFA000';
             ctx.lineWidth = 3;
@@ -488,7 +486,6 @@ function updateAndRender() {
             ctx.fill();
             ctx.stroke();
         } else if (item.type === 'heart_item') {
-            // Corazón Rojo Real y Definido[cite: 2]
             ctx.fillStyle = '#FF1744';
             ctx.strokeStyle = '#B71C1C';
             ctx.lineWidth = 2.5;
@@ -502,7 +499,6 @@ function updateAndRender() {
             ctx.fill();
             ctx.stroke();
 
-            // Brillo tierno en el corazón
             ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
             ctx.beginPath();
             ctx.arc(-6, -20, 3, 0, Math.PI * 2);
@@ -643,31 +639,55 @@ function updateAndRender() {
 }
 
 function handleAction(e) {
-    if (e && (e.code === 'Space' || e.key === ' ')) {
-        e.preventDefault();
-    }
+    if (e) e.preventDefault();
 
-    if (!isPlaying && startScreen.classList.contains('opacity-0') && gameOverScreen.classList.contains('hidden')) {
+    if (!isPlaying && !startScreen.classList.contains('opacity-0') && gameOverScreen.classList.contains('hidden')) {
         startGame();
     } else if (isPlaying) {
         hero.jump();
     }
 }
 
+// SOPORTE UNIFICADO MOUSE Y TÁCTIL PARA BOTONES
+function addPointerListener(element, callback) {
+    if (!element) return;
+    let isHandled = false;
+
+    element.addEventListener('pointerdown', (e) => {
+        if (e.pointerType === 'mouse' && e.button !== 0) return;
+        isHandled = true;
+        callback(e);
+    });
+
+    element.addEventListener('click', (e) => {
+        if (isHandled) {
+            isHandled = false;
+            return;
+        }
+        callback(e);
+    });
+}
+
 window.addEventListener('keydown', (e) => {
     if (e.code === 'Space' || e.key === ' ') {
+        e.preventDefault();
         handleAction(e);
     }
 });
 
-touchJumpZone.addEventListener('pointerdown', (e) => {
-    e.preventDefault();
+// Conexión de botones táctiles y de mouse
+addPointerListener(touchJumpZone, (e) => handleAction(e));
+addPointerListener(jumpBtn, (e) => {
+    e.stopPropagation();
     handleAction(e);
 });
-
-startBtn.addEventListener('click', (e) => {
+addPointerListener(startBtn, (e) => {
     e.stopPropagation();
     startGame();
+});
+addPointerListener(homeBtn, (e) => {
+    // Permite que el enlace navegue correctamente
+    window.location.href = homeBtn.getAttribute('href');
 });
 
 function startGame() {
@@ -688,6 +708,7 @@ function startGame() {
     gameOverScreen.classList.add('hidden');
     hud.classList.remove('hidden');
     touchJumpZone.classList.remove('hidden');
+    touchControlBar.classList.remove('hidden');
 
     isPlaying = true;
     if (animationFrameId) cancelAnimationFrame(animationFrameId);
