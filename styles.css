@@ -1,4 +1,4 @@
-[cite: 3]body {
+body {
   font-family: 'Fredoka', 'Mali', cursive, sans-serif;
   background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 50%, #fbc2eb 100%);
   min-height: 100vh;
@@ -8,35 +8,53 @@
 
 /* Animación de Nubes de Fondo */
 .cloud {
-  position: absolute;
-  background: rgba(255, 255, 255, 0.7);
+  position: fixed; /* Cambiado a fixed para asegurar que floten sobre el fondo */
+  background: rgba(255, 255, 255, 0.95); /* Color blanco más visible */
   border-radius: 50px;
   animation: floatCloud linear infinite;
   pointer-events: none;
-  z-index: 0;
+  z-index: 1; /* Posicionadas por encima del fondo y por debajo de las tarjetas */
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.05); /* Sombra para dar volumen */
 }
 
 .cloud::before, .cloud::after {
   content: '';
   position: absolute;
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.95);
   border-radius: 50%;
 }
 
-.cloud-1 { width: 140px; height: 45px; top: 8%; animation-duration: 28s; }
+.cloud-1 { 
+  width: 140px; 
+  height: 45px; 
+  top: 10%; 
+  animation-duration: 28s; 
+}
 .cloud-1::before { width: 50px; height: 50px; top: -20px; left: 25px; }
 .cloud-1::after { width: 60px; height: 60px; top: -28px; right: 25px; }
 
-.cloud-2 { width: 180px; height: 55px; top: 22%; animation-duration: 38s; animation-delay: -12s; }
+.cloud-2 { 
+  width: 180px; 
+  height: 55px; 
+  top: 30%; 
+  animation-duration: 38s; 
+  animation-delay: -12s; 
+}
 .cloud-2::before { width: 65px; height: 65px; top: -25px; left: 30px; }
 .cloud-2::after { width: 75px; height: 75px; top: -35px; right: 30px; }
 
-.cloud-3 { width: 120px; height: 40px; top: 65%; animation-duration: 32s; animation-delay: -5s; }
+.cloud-3 { 
+  width: 120px; 
+  height: 40px; 
+  top: 65%; 
+  animation-duration: 32s; 
+  animation-delay: -5s; 
+}
 .cloud-3::before { width: 45px; height: 45px; top: -18px; left: 20px; }
 .cloud-3::after { width: 50px; height: 50px; top: -22px; right: 20px; }
 
 @keyframes floatCloud {
-  0% { transform: translateX(-200px); }
+  0% { transform: translateX(-220px); }
   100% { transform: translateX(105vw); }
 }
 
